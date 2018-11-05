@@ -1,5 +1,8 @@
-require "codecitycli/version"
+require 'codecitycli/version'
+require 'thor'
 
-module Codecitycli
-  # Your code goes here...
+module CodeCityCLI
+  class CLI < Thor
+    desc 'code city', 'the code city CLI'
+  end
 end
