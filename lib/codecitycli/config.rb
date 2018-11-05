@@ -2,25 +2,29 @@ require 'yaml'
 
 module CodeCityCLI
   class Config
-    attr_accessor :config_hash
+    attr_accessor :api_key
+    attr_accessor :directory
 
     def initialize
-      @config_hash = Hash.new
       load
     end
 
     def load
       f = config_file
-      @config_hash = YAML.load(f)
-      if !@config_hash
-        @config_hash = Hash.new
+      config_hash = YAML.load(f)
+      if config_hash.is_a? Hash
+        @api_key = config_hash[:api_key] if config_hash[:api_key]
+        @directory = config_hash[:directory] if config_hash[:directory]
       end
     end
 
     def save
       # Save the hash into the config file
       f = config_file('w')
-      f.write(@config_hash.to_yaml)
+      config_hash = Hash.new
+      config_hash[:api_key] = @api_key if @api_key
+      config_hash[:directory] = @directory if @directory
+      f.write(config_hash.to_yaml)
     end
 
     private
