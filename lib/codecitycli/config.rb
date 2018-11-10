@@ -9,6 +9,10 @@ module CodeCityCLI
       load
     end
 
+    def login(username, password)
+      # Send a login request to the server and store the token
+    end
+
     def load
       f = config_file
       config_hash = YAML.load(f)

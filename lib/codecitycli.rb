@@ -15,5 +15,14 @@ module CodeCityCLI
 
       config.save
     end
+
+    desc 'login USERNAME PASSWORD', 'log into code city with USERNAME and PASSWORD'
+    def login(username, password)
+      config = Config.new
+
+      config.login(username, password)
+
+      config.save
+    end
   end
 end
