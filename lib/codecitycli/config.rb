@@ -1,7 +1,9 @@
 require 'yaml'
+require 'singleton'
 
 module CodeCityCLI
   class Config
+    include Singleton
     attr_accessor :api_key
     attr_accessor :directory
 

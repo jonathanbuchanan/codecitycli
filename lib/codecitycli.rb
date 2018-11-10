@@ -8,21 +8,17 @@ module CodeCityCLI
     option :api_key, type: :string
     option :directory, type: :string
     def config
-      config = Config.new
+      Config.instance.api_key = options[:api_key] if options[:api_key]
+      Config.instance.directory = options[:directory] if options[:directory]
 
-      config.api_key = options[:api_key] if options[:api_key]
-      config.directory = options[:directory] if options[:directory]
-
-      config.save
+      Config.instance.save
     end
 
     desc 'login USERNAME PASSWORD', 'log into code city with USERNAME and PASSWORD'
     def login(username, password)
-      config = Config.new
+      Config.instance.login(username, password)
 
-      config.login(username, password)
-
-      config.save
+      Config.instance.save
     end
   end
 end
