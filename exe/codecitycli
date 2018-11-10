@@ -2,4 +2,4 @@
 
 require "codecitycli"
 
-CodeCityCLI::CLI.start(ARGV)
+CodeCityCLI::CLI::Main.start(ARGV)
