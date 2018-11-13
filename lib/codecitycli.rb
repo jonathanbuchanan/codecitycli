@@ -1,6 +1,7 @@
 require 'codecitycli/version'
 require 'codecitycli/config'
 require 'codecitycli/course'
+require 'codecitycli/user'
 require 'thor'
 
 module CodeCityCLI
@@ -16,12 +17,8 @@ module CodeCityCLI
         Config.instance.save
       end
 
-      desc 'login USERNAME PASSWORD', 'log into code city with USERNAME and PASSWORD'
-      def login(username, password)
-        Config.instance.login(username, password)
-
-        Config.instance.save
-      end
+      desc 'user SUBCOMMAND', 'manage users'
+      subcommand 'user', CLI::User
 
       desc 'course SUBCOMMAND', 'manage courses'
       subcommand 'course', CLI::Course
