@@ -9,9 +9,31 @@ module CodeCityCLI
     attr_accessor :email
     attr_accessor :password
 
+    def initialize(args = {})
+      self.id = args[:id] if args[:id]
+      self.user_type = args[:user_type] if args[:user_type]
+      self.first_name = args[:first_name] if args[:first_name]
+      self.last_name = args[:last_name] if args[:last_name]
+      self.email = args[:email] if args[:email]
+      self.password = args[:password] if args[:password]
+    end
+
     def authenticate
-      # /authenticate?email=email&password=password
+      # POST /authenticate?email=email&password=password
       # return token
+    end
+
+    def create
+      # POST /users?user_type=user_type&first_name=first_name&last_name=last_name&email=email&password=password
+      # return token
+    end
+
+    def update
+      # PUT /users/id&user_type=user_type&first_name=first_name&last_name=last_name&email=email&password=password
+    end
+
+    def delete
+      # DELETE /users/self.id
     end
   end
 
@@ -28,6 +50,46 @@ module CodeCityCLI
 
         Config.instance.api_key = token
         Config.instance.save
+      end
+
+      desc 'new EMAIL PASSWORD', 'creates a new user with EMAIL and PASSWORD and signs it in'
+      option :user_type, type: :string, default: 'student'
+      option :first_name, type: :string, required: true
+      option :last_name, type: :string, required: true
+      def new(email, password)
+        user = CodeCityCLI::User.new(user_type: options[:user_type], first_name: options[:first_name], last_name: options[:last_name], email: email, password: password)
+
+        token = user.create
+
+        Config.instance.api_key = token
+        Config.instance.save
+      end
+
+      desc 'update', 'updates the current user'
+      option :email, type: :string
+      option :password, type: :string
+      option :user_type, type: :string
+      option :first_name, type: :string
+      option :last_name, type: :string
+      def update
+        user = CodeCityCLI::User.new(id: 0) # <- add a config property for user id
+
+        user.email = options[:email] if options[:email]
+        user.password = options[:password] if options[:password]
+        user.user_type = options[:user_type] if options[:user_type]
+        user.first_name = options[:first_name] if options[:first_name]
+        user.last_name = options[:last_name] if options[:last_name]
+
+        user.update
+      end
+
+      desc 'delete', 'deletes the current user'
+      def delete
+        user = CodeCityCLI::User.new(id: 0) # <- add a config property for user id
+
+        user.delete
+
+        Config.instance.api_key = nil
       end
     end
   end
