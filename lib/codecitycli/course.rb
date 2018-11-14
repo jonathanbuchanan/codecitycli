@@ -12,15 +12,15 @@ module CodeCityCLI
       self.repo_link = args[:repo_link] if args[:repo_link]
     end
 
-    def create
+    def create(user)
       # POST /courses?repo_link=a&title=b
     end
 
-    def update
+    def update(user)
       # PUT /courses/course_id?repo_link=a&title=b
     end
 
-    def delete
+    def delete(user)
       # DELETE /courses/course_id
     end
 
@@ -30,11 +30,11 @@ module CodeCityCLI
       return []
     end
 
-    def enroll(course_token)
+    def enroll(user, course_token)
       # POST /courses/course_id/enroll?user_id=a&course_token=b
     end
 
-    def disenroll
+    def disenroll(user)
       # POST /courses/course_id/disenroll?user_id=a
     end
   end
@@ -46,7 +46,7 @@ module CodeCityCLI
       def new(title)
         course = CodeCityCLI::Course.new(title: title, repo_link: options[:repo_link])
 
-        course.create
+        course.create CodeCityCLI::User.current_user
       end
 
       desc 'update COURSE_ID', 'updates the course with id COURSE_ID'
@@ -58,14 +58,14 @@ module CodeCityCLI
         course.title = options[:title] if options[:title]
         course.repo_link = options[:repo_link] if options[:repo_link]
 
-        course.update
+        course.update CodeCityCLI::User.current_user
       end
 
       desc 'delete COURSE_ID', 'deletes the course with id COURSE_ID'
       def delete(course_id)
         course = CodeCityCLI::Course.new(id: course_id)
 
-        course.delete
+        course.delete CodeCityCLI::User.current_user
       end
 
       desc 'list', 'lists courses'
@@ -80,7 +80,7 @@ module CodeCityCLI
       def enroll(course_id, course_token)
         course = CodeCityCLI::Course.new(id: course_id)
 
-        course.enroll course_token
+        course.enroll(CodeCityCLI::User.current_user, course_token)
       end
 
       desc 'disenroll COURSE_ID', 'disenrolls the current user from the course with id COURSE_ID'
@@ -93,7 +93,7 @@ module CodeCityCLI
 
         course = CodeCityCLI::Course.new(id: course_id)
 
-        course.disenroll
+        course.disenroll CodeCityCLI::User.current_user
       end
     end
   end

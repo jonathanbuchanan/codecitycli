@@ -18,6 +18,16 @@ module CodeCityCLI
       self.password = args[:password] if args[:password]
     end
 
+    def self.current_user(load_full = false)
+      user = User.new(id: Config.instance.user_id)
+
+      if load_full
+        # Load the full user from the API
+      end
+
+      return user
+    end
+
     def authenticate
       # POST /authenticate?email=email&password=password
       # return token
@@ -49,6 +59,7 @@ module CodeCityCLI
         token = user.authenticate
 
         Config.instance.api_key = token
+        Config.instance.user_id = user.id
         Config.instance.save
       end
 
@@ -62,6 +73,7 @@ module CodeCityCLI
         token = user.create
 
         Config.instance.api_key = token
+        Config.instance.user_id = user.id
         Config.instance.save
       end
 
@@ -72,7 +84,7 @@ module CodeCityCLI
       option :first_name, type: :string
       option :last_name, type: :string
       def update
-        user = CodeCityCLI::User.new(id: 0) # <- add a config property for user id
+        user = CodeCityCLI::User.current_user
 
         user.email = options[:email] if options[:email]
         user.password = options[:password] if options[:password]
@@ -85,7 +97,7 @@ module CodeCityCLI
 
       desc 'delete', 'deletes the current user'
       def delete
-        user = CodeCityCLI::User.new(id: 0) # <- add a config property for user id
+        user = CodeCityCLI::User.current_user
 
         user.delete
 
