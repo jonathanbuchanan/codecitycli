@@ -1,6 +1,21 @@
 require 'thor'
+require 'codecitycli/request'
 
 module CodeCityCLI
+  class AuthToken
+    attr_accessor :access_token
+    attr_accessor :client
+    attr_accessor :expiry
+    attr_accessor :uid
+
+    def initialize(response)
+      self.access_token = response[:headers]['access-token']
+      self.client = response[:headers][:client]
+      self.expiry = response[:headers][:expiry]
+      self.uid = response[:headers][:uid]
+    end
+  end
+
   class User
     attr_accessor :id
     attr_accessor :user_type
@@ -22,6 +37,7 @@ module CodeCityCLI
       user = User.new(id: Config.instance.user_id)
 
       if load_full
+        user_data = Request.get("/students/#{user.id}")
         # Load the full user from the API
       end
 
@@ -31,6 +47,7 @@ module CodeCityCLI
     def authenticate
       # POST /authenticate?email=email&password=password
       # return token
+      token = AuthToken.new(Request.post("/students/sign_in", { email: self.email, password: self.password }))
     end
 
     def create
@@ -58,7 +75,7 @@ module CodeCityCLI
 
         token = user.authenticate
 
-        Config.instance.api_key = token
+        Config.instance.token = token
         Config.instance.user_id = user.id
         Config.instance.save
       end

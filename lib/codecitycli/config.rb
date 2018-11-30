@@ -5,7 +5,7 @@ module CodeCityCLI
   class Config
     include Singleton
     attr_accessor :user_id
-    attr_accessor :api_key
+    attr_accessor :token
     attr_accessor :directory
 
     def initialize
@@ -21,7 +21,7 @@ module CodeCityCLI
       config_hash = YAML.load(f)
       if config_hash.is_a? Hash
         @user_id = config_hash[:user_id] if config_hash[:user_id]
-        @api_key = config_hash[:api_key] if config_hash[:api_key]
+        @token = config_hash[:token] if config_hash[:token]
         @directory = config_hash[:directory] if config_hash[:directory]
       end
     end
@@ -31,7 +31,7 @@ module CodeCityCLI
       f = config_file('w')
       config_hash = Hash.new
       config_hash[:user_id] = @user_id if @user_id
-      config_hash[:api_key] = @api_key if @api_key
+      config_hash[:token] = @token if @token
       config_hash[:directory] = @directory if @directory
       f.write(config_hash.to_yaml)
     end
