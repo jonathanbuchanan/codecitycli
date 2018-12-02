@@ -1,21 +1,31 @@
 require 'thor'
+require 'byebug'
 require 'codecitycli/lesson'
 require 'codecitycli/exercise'
 
 module CodeCityCLI
   class Course
-    attr_accessor :title
     attr_accessor :id
-    attr_accessor :repo_link
+    attr_accessor :title
+    attr_accessor :description
+    attr_accessor :image_url
+    attr_accessor :developer_id
+    attr_accessor :organization_id
 
     def initialize(args)
-      self.title = args[:title] if args[:title]
       self.id = args[:id] if args[:id]
-      self.repo_link = args[:repo_link] if args[:repo_link]
+      self.title = args[:title] if args[:title]
+      self.description = args[:description] if args[:description]
+      self.image_url = args[:image_url] if args[:image_url]
+      self.developer_id = args[:developer_id] if args[:developer_id]
+      self.organization_id = args[:organization_id] if args[:organization_id]
     end
 
     def create(user)
-      # POST /courses?repo_link=a&title=b
+      # POST /courses?title=a
+      result = Request.post("/courses/", { course: {title: self.title }})[:body]
+      print(result)
+      print("\n")
     end
 
     def update(user)
@@ -29,7 +39,8 @@ module CodeCityCLI
     def self.index
       # GET /courses/
       # return courses
-      return []
+      raw_courses = Request.get("/courses/", {})[:body]
+      return raw_courses.map { |c| Course.new(c) }
     end
 
     def enroll(user, course_token)
