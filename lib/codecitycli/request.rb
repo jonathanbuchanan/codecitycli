@@ -1,6 +1,5 @@
 require 'faraday'
 require 'faraday_middleware'
-require 'byebug'
 
 module CodeCityCLI
   module Request
@@ -14,7 +13,7 @@ module CodeCityCLI
 
     def self.post(ext, params={})
       connection = make_connection @@request_prefix + ext
-      response = connection.post '', params
+      response = connection.post('', params)
       { body: response.body, headers: response.headers }
     end
 
@@ -34,6 +33,7 @@ module CodeCityCLI
 
     def self.make_connection(url)
       Faraday.new(url: url) do |faraday|
+        faraday.request :json
         faraday.response :json, content_type: /\bjson$/, parser_options: { symbolize_names: true }
         faraday.adapter Faraday.default_adapter
       end
