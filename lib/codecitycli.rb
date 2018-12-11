@@ -24,6 +24,15 @@ module CodeCityCLI
 
       desc 'course SUBCOMMAND', 'manage courses'
       subcommand 'course', CLI::Course
+
+      desc 'token EMAIL USER_TYPE', 'create a token for the user of type USER_TYPE and email EMAIL'
+      def token(email, user_type)
+        user = CodeCityCLI::User.current_user
+        response = Request.get("/tokens/generate", { organization_id: user.account.organization_id, email: email, user_type: user_type }, user.account.token.headers)
+        token = response[:body][:token]
+        print(token)
+        print("\n")
+      end
     end
   end
 end
