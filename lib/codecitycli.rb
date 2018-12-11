@@ -33,6 +33,33 @@ module CodeCityCLI
         print(token)
         print("\n")
       end
+
+      desc 'fetch COURSE_ID/LESSON_ID/EXERCISE_ID', 'fetches the exercise with COURSE_ID, LESSON_ID, and EXERCISE_ID'
+      def fetch(exercise_path)
+        path = parse_exercise_path exercise_path
+      end
+
+      desc 'test COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'tests the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
+      def test(exercise_path, filename)
+        path = parse_exercise_path exercise_path
+      end
+
+      desc 'push COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'pushes the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
+      def push(exercise_path, filename)
+        path = parse_exercise_path exercise_path
+      end
+
+      private
+
+      def parse_exercise_path(path)
+        pieces = path.split('/')
+        if pieces.count != 3
+          # We have an uh-oh
+          print("Exercise path must match format: COURSE_ID/LESSON_ID/EXERCISE_ID\n");
+          return
+        end
+        { course: pieces[0], lesson: pieces[1], exercise: pieces[2] }
+      end
     end
   end
 end
