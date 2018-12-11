@@ -14,6 +14,15 @@ module CodeCityCLI
       self.expiry = response[:headers][:expiry]
       self.uid = response[:headers][:uid]
     end
+
+    def headers
+      {
+        "access-token" => @access_token,
+        "client" => @client,
+        "expiry" => @expiry,
+        "uid" => @uid
+      }
+    end
   end
 
   class User
@@ -57,6 +66,7 @@ module CodeCityCLI
       @organization_id = args[:organization_id] if args[:organization_id]
       @email = args[:email] if args[:email]
       @password = args[:password] if args[:password]
+      @token = args[:token] if args[:token]
     end
 
     def authenticate

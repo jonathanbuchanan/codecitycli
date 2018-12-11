@@ -22,17 +22,17 @@ module CodeCityCLI
 
     def create(user)
       # POST /courses?title=a
-      Request.post("/courses/", { course: get_params })
+      Request.post("/courses/", { course: get_params }, user.account.token.headers)
     end
 
     def update(user)
       # PUT /courses/course_id?repo_link=a&title=b
-      Request.put("/courses/#{self.id}", { course: get_params })
+      Request.put("/courses/#{self.id}", { course: get_params }, user.account.token.headers)
     end
 
     def delete(user)
       # DELETE /courses/course_id
-      Request.delete("/courses/#{self.id}", {})
+      Request.delete("/courses/#{self.id}", {}, user.account.token.headers)
     end
 
     def self.get(id)
