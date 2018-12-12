@@ -6,37 +6,40 @@ module CodeCityCLI
     @@request_prefix = 'http://localhost:3000/api/v1'
 
     def self.get(ext, params, headers={})
-      connection = make_connection @@request_prefix + ext
-      response = connection.get '', params, headers
-      { body: response.body, headers: response.headers }
+      make_connection(@@request_prefix + ext) { |c| c.get '', params, headers }
     end
 
     def self.post(ext, params, headers={})
-      connection = make_connection @@request_prefix + ext
-      response = connection.post '', params, headers
-      { body: response.body, headers: response.headers }
+      make_connection(@@request_prefix + ext) { |c| c.post '', params, headers }
     end
 
     def self.put(ext, params, headers={})
-      connection = make_connection @@request_prefix + ext
-      response = connection.put '', params, headers
-      { body: response.body, headers: response.headers }
+      make_connection(@@request_prefix + ext) { |c| c.put '', params, headers }
     end
 
     def self.delete(ext, params, headers={})
-      connection = make_connection @@request_prefix + ext
-      response = connection.delete '', params, headers
-      { body: response.body, headers: response.headers }
+      make_connection(@@request_prefix + ext) { |c| c.delete '', params, headers }
     end
 
     private
 
     def self.make_connection(url)
-      Faraday.new(url: url) do |faraday|
+      connection = Faraday.new(url: url) do |faraday|
         faraday.request :json
         faraday.response :json, content_type: /\bjson$/, parser_options: { symbolize_names: true }
         faraday.adapter Faraday.default_adapter
+        faraday.options.timeout = 15
+        faraday.options.open_timeout = 5
       end
+      result = {}
+      begin
+        result = yield(connection)
+      rescue Faraday::TimeoutError => e
+        raise ConnectionError, 'connection timed out'
+      rescue Faraday::ClientError => e
+        raise ConnectionError
+      end
+      { body: result.body, headers: result.headers }
     end
   end
 end

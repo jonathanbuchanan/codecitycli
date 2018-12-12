@@ -39,6 +39,7 @@ module CodeCityCLI
       def fetch(exercise_path)
         path = parse_exercise_path exercise_path
         exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
+        exercise.show CodeCityCLI::User.current_user
       rescue ParseError => e
       end
 
@@ -53,6 +54,7 @@ module CodeCityCLI
         exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
         print(exercise.push(filename, CodeCityCLI::User.current_user))
         print("\n")
+      rescue ConnectionError => e
       end
 
       private
