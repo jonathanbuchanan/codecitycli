@@ -17,6 +17,12 @@ module CodeCityCLI
     end
   end
 
+  class AuthenticationError < CodeCityCLIError
+    def initialize(msg = '')
+      super
+    end
+  end
+
   class APIError < CodeCityCLIError
     def initialize(msg = '')
       super

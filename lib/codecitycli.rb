@@ -18,10 +18,35 @@ module CodeCityCLI
         Config.instance.directory = options[:directory] if options[:directory]
 
         Config.instance.save
+      rescue CodeCityCLIError => e
+        show_error e
       end
 
-      desc 'user SUBCOMMAND', 'manage users'
-      subcommand 'user', CLI::User
+      desc 'login EMAIL PASSWORD', 'login in with EMAIL and PASSWORD'
+      option :as, type: :string, required: true
+      def login(email, password)
+        user = CodeCityCLI::User.new(email: email, password: password, user_type: options[:as].to_sym)                                                                                                 
+   
+        user.account.authenticate
+        token = user.account.token
+
+        Config.instance.token = token
+        Config.instance.user_id = user.account.id
+        Config.instance.user_type = user.user_type
+        Config.instance.save
+      rescue CodeCityCLIError => e
+        show_error e
+      end
+
+      desc 'logout', 'logs out the current user'
+      def logout
+        Config.instance.token = nil
+        Config.instance.user_id = nil
+        Config.instance.user_type = nil
+        Config.instance.save
+      rescue CodeCityCLIError => e
+        show_error e
+      end
 
       desc 'course SUBCOMMAND', 'manage courses'
       subcommand 'course', CLI::Course
@@ -33,6 +58,8 @@ module CodeCityCLI
         token = response[:body][:token]
         print(token)
         print("\n")
+      rescue CodeCityCLIError => e
+        show_error e
       end
 
       desc 'fetch COURSE_ID/LESSON_ID/EXERCISE_ID', 'fetches the exercise with COURSE_ID, LESSON_ID, and EXERCISE_ID'
@@ -47,6 +74,8 @@ module CodeCityCLI
       desc 'test COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'tests the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
       def test(exercise_path, filename)
         path = parse_exercise_path exercise_path
+      rescue CodeCityCLIError => e
+        show_error e
       end
 
       desc 'push COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'pushes the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
@@ -78,6 +107,8 @@ module CodeCityCLI
           title = 'Parsing Error'
         when APIError
           title = 'API Error'
+        when AuthenticationError
+          title = 'Authentication Error'
         end
         if e.message.empty?
           print("#{title}\n")
