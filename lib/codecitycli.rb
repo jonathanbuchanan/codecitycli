@@ -2,6 +2,7 @@ require 'codecitycli/version'
 require 'codecitycli/config'
 require 'codecitycli/course'
 require 'codecitycli/user'
+require 'codecitycli/exceptions'
 require 'thor'
 
 module CodeCityCLI
@@ -38,6 +39,7 @@ module CodeCityCLI
       def fetch(exercise_path)
         path = parse_exercise_path exercise_path
         exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
+      rescue ParseError => e
       end
 
       desc 'test COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'tests the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
@@ -58,9 +60,7 @@ module CodeCityCLI
       def parse_exercise_path(path)
         pieces = path.split('/')
         if pieces.count != 3
-          # We have an uh-oh
-          print("Exercise path must match format: COURSE_ID/LESSON_ID/EXERCISE_ID\n");
-          return
+          raise ParseError, 'malformed path to exercise'
         end
         { course: pieces[0], lesson: pieces[1], exercise: pieces[2] }
       end
