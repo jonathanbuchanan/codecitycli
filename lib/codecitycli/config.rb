@@ -10,7 +10,7 @@ module CodeCityCLI
     attr_accessor :directory
 
     def initialize
-      load
+      self.load
     end
 
     def login(username, password)

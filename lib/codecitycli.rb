@@ -37,6 +37,7 @@ module CodeCityCLI
       desc 'fetch COURSE_ID/LESSON_ID/EXERCISE_ID', 'fetches the exercise with COURSE_ID, LESSON_ID, and EXERCISE_ID'
       def fetch(exercise_path)
         path = parse_exercise_path exercise_path
+        exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
       end
 
       desc 'test COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'tests the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
@@ -47,6 +48,9 @@ module CodeCityCLI
       desc 'push COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'pushes the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
       def push(exercise_path, filename)
         path = parse_exercise_path exercise_path
+        exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
+        print(exercise.push CodeCityCLI::User.current_user)
+        print("\n")
       end
 
       private
