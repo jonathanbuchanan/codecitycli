@@ -35,9 +35,15 @@ module CodeCityCLI
       response = Request.get("/courses/#{self.course_id}/lessons/#{self.lesson_id}/exercises/#{self.id}", {}, user.account.token.headers)[:body]
     end
 
-    def push(user)
-      response = Request.post("/courses/#{self.course_id}/lessons/#{self.lesson_id}/exercises/push", { id: self.id }, user.account.token.headers)
+    def push(submission_path, user)
+      submission = get_local_file(submission_path)
+
+      response = Request.post("/courses/#{self.course_id}/lessons/#{self.lesson_id}/exercises/push", { id: self.id, submission: submission }, user.account.token.headers)
       response[:body]
+    end
+
+    def test(submission_path)
+      # Run the test
     end
 
     def self.index(user, course_id)
@@ -49,6 +55,17 @@ module CodeCityCLI
 
     def get_file(url)
       Faraday.get(url).body
+    end
+
+    def get_local_file(path)
+      content = ''
+
+      f = File.open(path, 'r')
+      f.each_line do |line|
+        content += line
+      end
+
+      content
     end
 
     def save_file(path, content)

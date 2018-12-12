@@ -49,7 +49,7 @@ module CodeCityCLI
       def push(exercise_path, filename)
         path = parse_exercise_path exercise_path
         exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
-        print(exercise.push CodeCityCLI::User.current_user)
+        print(exercise.push(filename, CodeCityCLI::User.current_user))
         print("\n")
       end
 
