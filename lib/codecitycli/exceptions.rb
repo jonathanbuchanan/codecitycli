@@ -1,17 +1,23 @@
 module CodeCityCLI
-  class ConnectionError < StandardError
+  class CodeCityCLIError < StandardError
     def initialize(msg = '')
       super
     end
   end
 
-  class ParseError < StandardError
+  class ConnectionError < CodeCityCLIError
     def initialize(msg = '')
       super
     end
   end
 
-  class APIError < StandardError
+  class ParseError < CodeCityCLIError
+    def initialize(msg = '')
+      super
+    end
+  end
+
+  class APIError < CodeCityCLIError
     def initialize(msg = '')
       super
     end

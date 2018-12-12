@@ -40,7 +40,8 @@ module CodeCityCLI
         path = parse_exercise_path exercise_path
         exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
         exercise.show CodeCityCLI::User.current_user
-      rescue ParseError => e
+      rescue CodeCityCLIError => e
+        show_error e
       end
 
       desc 'test COURSE_ID/LESSON_ID/EXERCISE_ID FILENAME', 'tests the exercise solution at FILENAME with COURSE_ID, LESSON_ID, and EXERCISE_ID'
@@ -54,7 +55,8 @@ module CodeCityCLI
         exercise = CodeCityCLI::Exercise.new(id: path[:exercise], lesson_id: path[:lesson], course_id: path[:course])
         print(exercise.push(filename, CodeCityCLI::User.current_user))
         print("\n")
-      rescue ConnectionError => e
+      rescue CodeCityCLIError => e
+        show_error e
       end
 
       private
@@ -65,6 +67,23 @@ module CodeCityCLI
           raise ParseError, 'malformed path to exercise'
         end
         { course: pieces[0], lesson: pieces[1], exercise: pieces[2] }
+      end
+
+      def show_error(e)
+        title = 'Error'
+        case e
+        when ConnectionError
+          title = 'Connection Error'
+        when ParseError
+          title = 'Parsing Error'
+        when APIError
+          title = 'API Error'
+        end
+        if e.message.empty?
+          print("#{title}\n")
+        else
+          print("#{title}: #{e.message}\n")
+        end
       end
     end
   end
