@@ -48,9 +48,6 @@ module CodeCityCLI
         show_error e
       end
 
-      desc 'course SUBCOMMAND', 'manage courses'
-      subcommand 'course', CLI::Course
-
       desc 'token EMAIL USER_TYPE', 'create a token for the user of type USER_TYPE and email EMAIL'
       def token(email, user_type)
         user = CodeCityCLI::User.current_user
