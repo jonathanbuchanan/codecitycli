@@ -1,25 +1,50 @@
 require 'thor'
+require 'codecitycli/request'
 
 module CodeCityCLI
+  class AuthToken
+    attr_accessor :access_token
+    attr_accessor :client
+    attr_accessor :expiry
+    attr_accessor :uid
+
+    def initialize(response)
+      self.access_token = response[:headers]['access-token']
+      self.client = response[:headers][:client]
+      self.expiry = response[:headers][:expiry]
+      self.uid = response[:headers][:uid]
+    end
+
+    def headers
+      {
+        "access-token" => @access_token,
+        "client" => @client,
+        "expiry" => @expiry,
+        "uid" => @uid
+      }
+    end
+  end
+
   class User
-    attr_accessor :id
     attr_accessor :user_type
-    attr_accessor :first_name
-    attr_accessor :last_name
-    attr_accessor :email
-    attr_accessor :password
+    attr_accessor :account
 
     def initialize(args = {})
-      self.id = args[:id] if args[:id]
-      self.user_type = args[:user_type] if args[:user_type]
-      self.first_name = args[:first_name] if args[:first_name]
-      self.last_name = args[:last_name] if args[:last_name]
-      self.email = args[:email] if args[:email]
-      self.password = args[:password] if args[:password]
+      @user_type = args[:user_type]
+      case @user_type
+      when :student
+        @account = Student.new(args)
+      when :instructor
+        @account = Instructor.new(args)
+      when :developer
+        @account = Developer.new(args)
+      when :admin
+        @account = Admin.new(args)
+      end
     end
 
     def self.current_user(load_full = false)
-      user = User.new(id: Config.instance.user_id)
+      user = User.new(user_type: Config.instance.user_type, id: Config.instance.user_id, token: Config.instance.token)
 
       if load_full
         # Load the full user from the API
@@ -27,39 +52,65 @@ module CodeCityCLI
 
       return user
     end
+  end
+
+  class Account
+    attr_accessor :id
+    attr_accessor :organization_id
+    attr_accessor :email
+    attr_accessor :password
+    attr_accessor :token
+
+    def initialize(args = {})
+      @id = args[:id] if args[:id]
+      @organization_id = args[:organization_id] if args[:organization_id]
+      @email = args[:email] if args[:email]
+      @password = args[:password] if args[:password]
+      @token = args[:token] if args[:token]
+    end
 
     def authenticate
-      # POST /authenticate?email=email&password=password
-      # return token
+      @token = AuthToken.new(Request.post(auth_path, { email: @email, password: @password }))
     end
+  end
 
-    def create
-      # POST /users?user_type=user_type&first_name=first_name&last_name=last_name&email=email&password=password
-      # return token
+  class Student < Account
+    def auth_path
+      '/students/sign_in'
     end
+  end
 
-    def update
-      # PUT /users/id&user_type=user_type&first_name=first_name&last_name=last_name&email=email&password=password
+  class Instructor < Account
+    def auth_path
+      '/instructors/sign_in'
     end
+  end
 
-    def delete
-      # DELETE /users/self.id
+  class Developer < Account
+    def auth_path
+      '/developers/sign_in'
+    end
+  end
+
+  class Admin < Account
+    def auth_path
+      '/admins/sign_in'
     end
   end
 
   module CLI
     class User < Thor
       desc 'login EMAIL PASSWORD', 'log into code city with EMAIL and PASSWORD'
+      option :as, type: :string, required: true
       def login(email, password)
-        user = CodeCityCLI::User.new
+        user = CodeCityCLI::User.new(email: email, password: password, user_type: options[:as].to_sym)
 
-        user.email = email
-        user.password = password
+        user.account.authenticate
+        token = user.account.token
 
-        token = user.authenticate
-
-        Config.instance.api_key = token
-        Config.instance.user_id = user.id
+        Config.instance.token = token
+        Config.instance.user_id = user.account.id
+        Config.instance.user_type = user.user_type
         Config.instance.save
       end
 
