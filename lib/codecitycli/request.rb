@@ -39,6 +39,9 @@ module CodeCityCLI
       rescue Faraday::ClientError => e
         raise ConnectionError
       end
+      if result.status != 200
+        raise APIError, result.body[:message]
+      end
       { body: result.body, headers: result.headers }
     end
   end
