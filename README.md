@@ -1,39 +1,77 @@
-# Codecitycli
+# CodeCityCLI
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/codecitycli`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A command line tool to download, test, and submit exercises from Code City
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'codecitycli'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Install it yourself as:
 
     $ gem install codecitycli
 
 ## Usage
 
-TODO: Write usage instructions here
+### Configuration
+
+To configure the directory that the tool uses:
+
+    $ codecitycli config --directory=YOUR_DIRECTORY
+
+Configuration is stored in the home directory at ~/.codecity.config
+
+### Authentication
+
+To log in, run:
+
+    $ codecitycli login --as=USER_TYPE YOUR_EMAIL YOUR_PASSWORD
+
+*the `as` option defaults to `student`, but you can use `instructor`, `developer`, or `admin` as well to match your account type*
+
+---
+
+To log out, simply run:
+
+    $ codecitycli logout
+
+### Doing Exercises
+
+Run this to fetch an exercise from a course you are enrolled in:
+
+    $ codecitycli fetch COURSE_ID/LESSON_ID/EXERCISE_ID
+
+This will place the test file and the exercise files in the folder `course_name/lesson_name/exercise_name` within the directory specified in the configuration.
+
+---
+
+To test the exercise locally, run:
+
+    $ codecitycli test COURSE_ID/LESSON_ID/EXERCISE_ID
+
+---
+
+Finally, to submit your completed solution, type:
+
+    $ codecitycli push COURSE_ID/LESSON_ID/EXERCISE_ID SOLUTION_FILE
+
+### Other
+
+As an admin, developer, or instructor, run this to generate a new token:
+
+    $ codecitycli token EMAIL USER_TYPE
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`.
+
+## Roadmap
+
+- Interpret exercise ids as a hex string that is parsed by the tool
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/codecitycli.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jonathanbuchanan/codecitycli.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+This project is available under the [MIT License](./LICENSE.txt)
