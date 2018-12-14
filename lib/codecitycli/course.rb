@@ -34,9 +34,10 @@ module CodeCityCLI
       Request.delete("/courses/#{self.id}", {}, user.account.token.headers)
     end
 
-    def self.get(id)
+    def self.get(id, user)
       # GET /courses/#{id}
-      raw_course = Request.get("/courses/#{id}", {})[:body]
+      raw_course = Request.get("/courses/#{id}", {}, user.account.token.headers)[:body]
+      print(raw_course.to_s + "\n")
       return Course.new(raw_course)
     end
 

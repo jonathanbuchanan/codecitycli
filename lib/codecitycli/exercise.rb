@@ -81,13 +81,13 @@ module CodeCityCLI
     end
 
     def course_name
-      # TODO: Fetch course name
-      'course'
+      course = Course.get(@course_id, User.current_user)
+      course.title
     end
 
     def lesson_name
-      # TODO: Fetch lesson name
-      'lesson'
+      lesson = Lesson.get(@course_id, @lesson_id, User.current_user)
+      lesson.title
     end
   end
 end

@@ -19,7 +19,7 @@ module CodeCityCLI
       end
 
       desc 'login EMAIL PASSWORD', 'login in with EMAIL and PASSWORD'
-      option :as, type: :string, required: true
+      option :as, type: :string, default: 'student'
       def login(email, password)
         user = CodeCityCLI::User.new(email: email, password: password, user_type: options[:as].to_sym)                                                                                                 
    
