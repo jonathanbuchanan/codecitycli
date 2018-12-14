@@ -1,4 +1,3 @@
-require 'thor'
 require 'codecitycli/lesson'
 require 'codecitycli/exercise'
 
