@@ -40,7 +40,11 @@ module CodeCityCLI
         raise ConnectionError
       end
       if result.status != 200
-        raise APIError, result.body[:message]
+        if result.body.is_a? Hash and result.body.key? :message
+          raise APIError, result.body[:message]
+        else
+          raise APIError
+        end
       end
       { body: result.body, headers: result.headers }
     end

@@ -1,11 +1,4 @@
 require "test_helper"
 
-class CodecitycliTest < Minitest::Test
-  def test_that_it_has_a_version_number
-    refute_nil ::Codecitycli::VERSION
-  end
-
-  def test_it_does_something_useful
-    assert false
-  end
+class CodeCityCLITest < Minitest::Test
 end
