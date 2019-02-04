@@ -39,7 +39,7 @@ module CodeCityCLI
         end
       end
       @@attributes.each do |attr|
-        if self.instance_variable_get("@#{attr[:attribute].to_s}") == nil and attr.key? :default
+        if !self.instance_variable_defined?("@#{attr[:attribute].to_s}") and attr.key? :default
           self.instance_variable_set("@#{attr[:attribute].to_s}", attr[:default])
         end
       end
