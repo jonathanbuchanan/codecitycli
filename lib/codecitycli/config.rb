@@ -60,7 +60,7 @@ module CodeCityCLI
 
     def config_file(mode = 'r')
       path = Dir.home + '/.codecity.config'
-      if !File.exists?(path)
+      if !File.exist?(path)
         File.open(path, 'w') {}
       end
       File.open(path, mode)

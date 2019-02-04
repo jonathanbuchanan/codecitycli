@@ -8,11 +8,11 @@ module CodeCityCLI
     attr_accessor :expiry
     attr_accessor :uid
 
-    def initialize(response)
-      self.access_token = response[:headers]['access-token']
-      self.client = response[:headers][:client]
-      self.expiry = response[:headers][:expiry]
-      self.uid = response[:headers][:uid]
+    def initialize(args)
+      self.access_token = args['access-token']
+      self.client = args[:client]
+      self.expiry = args[:expiry]
+      self.uid = args[:uid]
     end
 
     def headers
@@ -40,6 +40,8 @@ module CodeCityCLI
         @account = Developer.new(args)
       when :admin
         @account = Admin.new(args)
+      else
+        raise ValidationError, "account type must be student, instructor, developer, or admin"
       end
     end
 
@@ -70,11 +72,44 @@ module CodeCityCLI
     end
 
     def authenticate
+      validate
       response = Request.post(auth_path, { email: @email, password: @password })
-      if response[:body].key?(:success) and response[:body][:success] == false
+      unless response[:body]
+        raise APIError, "response does not have a body"
+      end
+      unless response[:body].key?(:success)
+        raise APIError, "body does not have a success flag"
+      end
+      unless response[:body][:success] == true
         raise AuthenticationError, 'invalid login credentials'
       end
-      @token = AuthToken.new(response)
+      unless response[:headers]
+        raise APIError, "response does not have a header"
+      end
+      unless response[:headers]['access-token']
+        raise APIError, "response does not have an access token"
+      end
+      unless response[:headers][:client]
+        raise APIError, "response does not have a client"
+      end
+      unless response[:headers][:expiry]
+        raise APIError, "response does not have an expiry"
+      end
+      unless response[:headers][:uid]
+        raise APIError, "response does not have a uid"
+      end
+      @token = AuthToken.new(response[:headers])
+    end
+
+    private
+
+    def validate
+      unless defined? @email
+        raise ValidationError, "email required for authentication"
+      end
+      unless defined? @password
+        raise ValidationError, "password required for authentication"
+      end
     end
   end
 
