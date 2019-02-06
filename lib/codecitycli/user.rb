@@ -73,7 +73,7 @@ module CodeCityCLI
 
     def authenticate
       validate
-      response = Request.post(auth_path, { email: @email, password: @password })
+      response = Request.send(auth_endpoint, @email, @password)
       unless response[:body]
         raise APIError, "response does not have a body"
       end
@@ -114,26 +114,26 @@ module CodeCityCLI
   end
 
   class Student < Account
-    def auth_path
-      '/students/sign_in'
+    def auth_endpoint
+      :student_sign_in
     end
   end
 
   class Instructor < Account
-    def auth_path
-      '/instructors/sign_in'
+    def auth_endpoint
+      :instructor_sign_in
     end
   end
 
   class Developer < Account
-    def auth_path
-      '/developers/sign_in'
+    def auth_endpoint
+      :developer_sign_in
     end
   end
 
   class Admin < Account
-    def auth_path
-      '/admins/sign_in'
+    def auth_endpoint
+      :admin_sign_in
     end
   end
 end

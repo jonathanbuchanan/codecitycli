@@ -21,7 +21,7 @@ module CodeCityCLI
     config_attributes([
       { attribute: :user_type },
       { attribute: :user_id },
-      { attribute: :organization_id },
+      { attribute: :organization },
       { attribute: :token },
       { attribute: :directory, default: default_directory }
     ])
