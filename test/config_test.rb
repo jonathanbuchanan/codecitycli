@@ -3,7 +3,7 @@ require "test_helper"
 class ConfigTest < Minitest::Test
   def test_config_load
     # Loading a blank file
-    YAML.stub(:load, {}) do
+    YAML.stub(:load, nil) do
       Config.instance.load
 
       assert Config.instance.user_type == nil

@@ -47,6 +47,14 @@ module CodeCityCLI
       post("/admins/sign_in", { email: email, password: password })
     end
 
+    def self.exercise_get()
+
+    end
+
+    def self.exercise_push(course_id, lesson_id, exercise_id, submission, user)
+      Request.post("/courses/#{course_id}/lessons/#{lesson_id}/exercises/#{exercise_id}/push", { submission: submission }, user.account.token.headers)
+    end
+
     private
 
     def self.get(ext, params, headers={})

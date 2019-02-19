@@ -1,4 +1,5 @@
 require "test_helper"
+require "spy/integration"
 
 class RequestTest < Minitest::Test
   def test_request_prefix
