@@ -31,15 +31,20 @@ module CodeCityCLI
     end
 
     def load
+      # Load file
       f = config_file
       config_hash = YAML.load(f)
+
+      # Go through the values
       if config_hash.is_a? Hash
         config_hash.each do |key, value|
           self.instance_variable_set("@#{key.to_s}", value)
         end
       end
+
+      # Assign defaults
       @@attributes.each do |attr|
-        if !self.instance_variable_defined?("@#{attr[:attribute].to_s}") and attr.key? :default
+        if !self.instance_variable_defined?("@#{attr[:attribute].to_s}") or self.instance_variable_get("@#{attr[:attribute].to_s}") == nil
           self.instance_variable_set("@#{attr[:attribute].to_s}", attr[:default])
         end
       end

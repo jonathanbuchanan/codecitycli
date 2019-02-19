@@ -2,6 +2,13 @@ require "test_helper"
 
 class ConfigTest < Minitest::Test
   def test_config_load
+    # Set the config to nil in case a test ran before this
+    Config.instance.user_type = nil
+    Config.instance.user_id = nil
+    Config.instance.organization = nil
+    Config.instance.token = nil
+    Config.instance.directory = nil
+
     # Loading a blank file
     YAML.stub(:load, nil) do
       Config.instance.load
