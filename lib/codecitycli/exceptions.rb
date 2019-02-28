@@ -28,4 +28,10 @@ module CodeCityCLI
       super
     end
   end
+
+  class ValidationError < CodeCityCLIError
+    def initialize(msg = '')
+      super
+    end
+  end
 end

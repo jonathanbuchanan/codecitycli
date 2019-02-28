@@ -10,8 +10,10 @@ module CodeCityCLI
     class Main < Thor
       desc 'config', 'configure settings for the client'
       option :directory, type: :string
+      option :organization, type: :string
       def config
-        Config.instance.directory = options[:directory]
+        Config.instance.directory ||= options[:directory]
+        Config.instance.organization ||= options[:organization]
 
         Config.instance.save
       rescue CodeCityCLIError => e
@@ -21,8 +23,8 @@ module CodeCityCLI
       desc 'login EMAIL PASSWORD', 'login in with EMAIL and PASSWORD'
       option :as, type: :string, default: 'student'
       def login(email, password)
-        user = CodeCityCLI::User.new(email: email, password: password, user_type: options[:as].to_sym)                                                                                                 
-   
+        user = CodeCityCLI::User.new(email: email, password: password, user_type: options[:as].to_sym)
+
         user.account.authenticate
         token = user.account.token
 
